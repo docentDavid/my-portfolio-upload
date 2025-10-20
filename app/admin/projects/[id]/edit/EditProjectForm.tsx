@@ -2,25 +2,37 @@
 
 import { useState, useTransition } from "react";
 import ImageUpload from "@/app/admin/ImageUpload";
-import { createProject } from "@/app/actions/projects";
+import { updateProject } from "@/app/actions/projects";
+import { Project } from "@/lib/types";
 import Link from "next/link";
 
-export default function NewProjectPage() {
+export default function EditProjectForm({ project }: { project: Project }) {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [removeImage, setRemoveImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async (formData: FormData) => {
     setError(null);
 
-    // Add image file to formData if selected
+    // Add current image URL
+    if (project.cover_url) {
+      formData.set("currentImageUrl", project.cover_url);
+    }
+
+    // Add new image if selected
     if (selectedImage) {
       formData.set("image", selectedImage);
     }
 
+    // Add remove image flag
+    if (removeImage) {
+      formData.set("removeImage", "true");
+    }
+
     startTransition(async () => {
       try {
-        await createProject(formData);
+        await updateProject(project.id, formData);
       } catch (err) {
         console.error(err);
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -31,7 +43,7 @@ export default function NewProjectPage() {
   return (
     <div className="px-4 sm:px-0">
       <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">
-        Create New Project
+        Edit Project
       </h1>
 
       {error && (
@@ -56,11 +68,12 @@ export default function NewProjectPage() {
             name="title"
             id="title"
             required
+            defaultValue={project.title}
             disabled={isPending}
             className="mt-1 block w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
           />
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-            The slug will be auto-generated from the title
+            Current slug: {project.slug}
           </p>
         </div>
 
@@ -75,6 +88,7 @@ export default function NewProjectPage() {
             name="summary"
             id="summary"
             rows={3}
+            defaultValue={project.summary || ""}
             disabled={isPending}
             className="mt-1 block w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
           />
@@ -91,6 +105,7 @@ export default function NewProjectPage() {
             name="content"
             id="content"
             rows={10}
+            defaultValue={project.content || ""}
             disabled={isPending}
             className="mt-1 block w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
           />
@@ -108,6 +123,7 @@ export default function NewProjectPage() {
             name="tags"
             id="tags"
             placeholder="React, Next.js, TypeScript"
+            defaultValue={project.tags?.join(", ") || ""}
             disabled={isPending}
             className="mt-1 block w-full rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
           />
@@ -116,13 +132,24 @@ export default function NewProjectPage() {
           </p>
         </div>
 
-        <ImageUpload onImageChange={setSelectedImage} />
+        <ImageUpload
+          currentImageUrl={project.cover_url}
+          onImageChange={(file) => {
+            setSelectedImage(file);
+            if (file === null && project.cover_url) {
+              setRemoveImage(true);
+            } else {
+              setRemoveImage(false);
+            }
+          }}
+        />
 
         <div className="flex items-center">
           <input
             type="checkbox"
             name="is_hidden"
             id="is_hidden"
+            defaultChecked={project.is_hidden}
             disabled={isPending}
             className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
           />
@@ -140,7 +167,7 @@ export default function NewProjectPage() {
             disabled={isPending}
             className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isPending ? "Creating..." : "Create Project"}
+            {isPending ? "Updating..." : "Update Project"}
           </button>
 
           <Link

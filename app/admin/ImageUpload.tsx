@@ -2,7 +2,9 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { RECOMMENDED_WIDTH, RECOMMENDED_HEIGHT } from "@/lib/image-upload";
+
+const RECOMMENDED_WIDTH = 1200;
+const RECOMMENDED_HEIGHT = 630;
 
 type ImageUploadProps = {
   currentImageUrl?: string | null;
