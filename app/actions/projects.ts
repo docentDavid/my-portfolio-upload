@@ -178,3 +178,68 @@ export async function getProject(id: string): Promise<Project | null> {
 
   return data;
 }
+
+// Add this new function for creating with image upload
+export async function createProjectWithImage(formData: FormData) {
+  const supabase = await createServer();
+
+  // Check authentication
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const title = formData.get("title") as string;
+  const summary = formData.get("summary") as string;
+  const content = formData.get("content") as string;
+  const tagsInput = formData.get("tags") as string;
+  const is_hidden = formData.get("is_hidden") === "on";
+  const imageFile = formData.get("image") as File | null;
+
+  // Convert comma-separated tags to array
+  const tags = tagsInput
+    ? tagsInput
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+    : [];
+
+  const slug = generateSlug(title);
+
+  // Upload image if provided
+  let cover_url = null;
+  if (imageFile && imageFile.size > 0) {
+    const { uploadProjectImage } = await import("@/lib/image-upload");
+    const uploadResult = await uploadProjectImage(imageFile, slug);
+    if (uploadResult.error) {
+      throw new Error(uploadResult.error);
+    }
+    cover_url = uploadResult.url;
+  }
+
+  const { error } = await supabase
+    .from("projects")
+    .insert({
+      title,
+      slug,
+      summary: summary || null,
+      content: content || null,
+      tags: tags.length > 0 ? tags : null,
+      cover_url,
+      is_hidden,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Create error:", error);
+    throw new Error(`Failed to create project: ${error.message}`);
+  }
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  redirect("/admin");
+}
