@@ -30,7 +30,7 @@ export default function MobileNav() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="fixed top-16 inset-x-0 z-50 md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg">
+        <div className="fixed top-16 left-1/2 -translate-x-1/2 w-[90vw] z-50 md:hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg">
           <div className="px-4 pt-2 pb-3 space-y-1">
             <Link
               href="/"
