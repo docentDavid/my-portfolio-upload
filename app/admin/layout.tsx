@@ -63,7 +63,7 @@ export default async function AdminLayout({
               </div>
 
               {/* Mobile menu button */}
-              <MobileNav user={user} />
+              <MobileNav />
             </div>
           </div>
         </div>

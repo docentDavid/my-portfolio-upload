@@ -4,13 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { logout } from "@/app/actions/auth";
 
-interface MobileNavProps {
-  user: {
-    email: string;
-  };
-}
-
-export default function MobileNav({ user }: MobileNavProps) {
+export default function MobileNav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -36,14 +30,14 @@ export default function MobileNav({ user }: MobileNavProps) {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="absolute top-16 left-0 right-0 z-50 md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="fixed top-16 inset-x-0 z-50 md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg">
+          <div className="px-4 pt-2 pb-3 space-y-1">
             <Link
               href="/"
-              className="block px-3 py-2 text-base font-medium text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-md"
+              className="block px-3 py-2 text-base font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-md"
               onClick={() => setIsMenuOpen(false)}
             >
-              ←
+              Public View
             </Link>
             <Link
               href="/admin"
