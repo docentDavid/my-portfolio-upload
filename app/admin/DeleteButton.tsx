@@ -16,7 +16,7 @@ export default function DeleteButton({ label = "Delete" }: DeleteButtonProps) {
     <button
       type="submit"
       onClick={handleClick}
-      className="px-3 py-1 text-sm border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+      className="w-full sm:w-auto inline-flex items-center justify-center px-3 py-2 text-sm font-medium border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
     >
       {label}
     </button>
