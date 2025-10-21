@@ -2,7 +2,6 @@ import { createServer } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Project } from "@/lib/types";
 import Image from "next/image";
-import { PostgrestError } from "@supabase/supabase-js";
 
 export default async function HomePage() {
   const supabase = await createServer();

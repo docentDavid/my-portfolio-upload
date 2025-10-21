@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["placehold.co"],
     remotePatterns: [
       {
         protocol: "https",
@@ -18,7 +17,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: "5mb", // ⬅️ set to 5MB instead of 1MB
+      bodySizeLimit: "5mb", // Set to 5MB instead of 1MB
     },
   },
 };
